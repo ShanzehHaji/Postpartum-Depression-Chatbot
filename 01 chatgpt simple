@@ -3,7 +3,7 @@ import gradio
 import json
 
 # Load your dataset
-with open('/Users/shanzehhaji/Downloads/intents 3.json', 'r') as f:
+with open('/Users/shanzehhaji/Downloads/intents 3 copy.json', 'r') as f:
     data = json.load(f)
 
 # Print the columns (keys)
