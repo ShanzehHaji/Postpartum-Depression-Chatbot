@@ -1,0 +1,38 @@
+import openai
+import gradio
+import json
+
+# Load your dataset
+with open('/Users/shanzehhaji/Downloads/intents 3.json', 'r') as f:
+    data = json.load(f)
+
+# Print the columns (keys)
+if data and 'intents' in data:
+    print("Columns in your dataset:", data['intents'][0].keys())
+
+openai.api_key = "OPENAI API KEY"
+
+messages = [{"role": "system", "content": "You are a Trusted Friend"}]
+
+def CustomChatGPT(user_input):
+    # Your logic to use the dataset goes here
+    for entry in data['intents']:
+        for pattern in entry.get('patterns', []):
+            if user_input.lower() in pattern.lower():
+                special_response = entry.get('responses', ["I don't have an answer for that."])[0]
+                messages.append({"role": "assistant", "content": special_response})
+                return special_response
+
+    messages.append({"role": "user", "content": user_input})
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages
+    )
+    ChatGPT_reply = response["choices"][0]["message"]["content"]
+    messages.append({"role": "assistant", "content": ChatGPT_reply})
+    return ChatGPT_reply
+
+demo = gradio.Interface(fn=CustomChatGPT, inputs="text", outputs="text", title="The Ultimate Companion for New Moms")
+
+demo.launch(share=True)
+
